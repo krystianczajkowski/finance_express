@@ -1,0 +1,16 @@
+{% extends 'layout.njk' %}
+{% block title %}
+    {{ title }}
+{% endblock %}
+{% block main %}
+    {% if not message %}
+        <p>No messages!</p>
+    {% endif %}
+    <h1>
+        {{ message }}
+    </h1>
+    <form action="/quote" method="post">
+        <input type="text" autocomplete="off" placeholder="TICKER" name="symbol">
+        <input type="submit" value="SEND">
+    </form>
+{% endblock %}

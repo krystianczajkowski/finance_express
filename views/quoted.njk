@@ -1,0 +1,14 @@
+{% extends 'layout.njk' %}
+{% block title %}
+    {{ title }}
+{% endblock %}
+{% block main %}
+    {% if not message %}
+        <p>No messages!</p>
+    {% endif %}
+    <h1 class="display-1">
+        It's free!
+        <p>{{ price }}</p>
+    </h1>
+    
+{% endblock %}
