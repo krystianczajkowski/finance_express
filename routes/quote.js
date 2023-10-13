@@ -10,7 +10,7 @@ function lookup(symbol, res) {
             `&period2=${timeNow}` +
             `&interval=1d&events=history&includeAdjustedClose=true`;
   
-  params = {
+  const params = {
     cookies: {
       'session': crypto.randomUUID(),
     },
@@ -19,8 +19,9 @@ function lookup(symbol, res) {
       'Accept': '*/*',
       
     }
-  }
-  r = new Request(url, params);
+  };
+  
+  let r = new Request(url, params);
   fetch(r)
     .then((response) => {
       if (!response.ok) {
@@ -46,18 +47,17 @@ function lookup(symbol, res) {
       return res.render('quoted.njk', deets)
   }).catch((Error) => {
     console.log('Error!');
+    return res.render('quote.njk', {message:'Wrong ticker'})
   });
 }
-
 
 router.post('/', async function(req, res, next) {
   let ticker = req.body.symbol;
   lookup(ticker, res);
-  // return res.render('quote.njk', {title: 'Failed!', message: 'Price check failed!'})
 });
 
 router.get('/', function(req, res) {
-  res.render('quote.njk', {title: 'QUOTE', message: 'hello quote'});
+  res.render('quote.njk', {title: 'Quote', message: 'Check price:'});
 });
 
 module.exports = router;
