@@ -19,7 +19,8 @@ var buyRouter = require('./routes/buy');
 var sellRouter = require('./routes/sell');
 var quoteRouter = require('./routes/quote');
 
-const db = new sqlite3.Database(':memory:');
+const db = new sqlite3.Database('database.db');
+db.close();
 
 var app = express();
 
