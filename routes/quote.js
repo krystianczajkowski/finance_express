@@ -1,25 +1,59 @@
 var express = require('express');
 var router = express.Router();
 
-
-function lookup(ticker) {
-  let tickersymbol = ticker.toUpperCase();
-  console.log(`Checking price of ${tickersymbol}\n`);
-  return tickersymbol;
+function lookup(symbol, res) {
+  let ticker = symbol.toUpperCase();
+  let timeNow = parseInt(Date.now()/1000);
+  let timeThen = parseInt(timeNow - (60 * 60 * 1000));
+  let url = `https://query1.finance.yahoo.com/v7/finance/download/${ticker}`+
+            `?period1=${timeThen}` +
+            `&period2=${timeNow}` +
+            `&interval=1d&events=history&includeAdjustedClose=true`;
+  
+  params = {
+    cookies: {
+      'session': crypto.randomUUID(),
+    },
+    headers: {
+      'User-Agent': 'javascript-requests',
+      'Accept': '*/*',
+      
+    }
+  }
+  r = new Request(url, params);
+  fetch(r)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error;
+      }
+      return response.text();
+    }).then((response) => {
+      let titles = response.slice(0, response.indexOf('\n')).split(',');
+      let json = response.slice(response.indexOf('\n') + 1).split('\n').map(
+        fn => {
+          const values = fn.split(',');
+          return titles.reduce(
+            (obj, title, index) => ((obj[title] = values[index]), obj),
+            {});
+        });
+      let price = json.reverse()[0]['Adj Close'];
+      const deets = {
+        "name": ticker,
+        "price": parseFloat(price).toFixed(2),
+        "symbol": ticker
+      };
+      console.log(deets);
+      return res.render('quoted.njk', deets)
+  }).catch((Error) => {
+    console.log('Error!');
+  });
 }
 
 
 router.post('/', async function(req, res, next) {
   let ticker = req.body.symbol;
-  let symbol = lookup(ticker);
-  if (symbol) {
-    let  data = {
-      price: symbol,
-      title: 'quoted POST',
-    };
-    return res.render('quoted.njk', data);
-  }
-  return res.render('quote.njk', {title: 'Failed!', message: 'Price check failed!'})
+  lookup(ticker, res);
+  // return res.render('quote.njk', {title: 'Failed!', message: 'Price check failed!'})
 });
 
 router.get('/', function(req, res) {
