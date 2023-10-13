@@ -23,10 +23,17 @@ const db = new sqlite3.Database(':memory:');
 
 var app = express();
 
-nunjucks.configure('views', {
+var env = nunjucks.configure('views', {
   autoescape: true,
-  express:  app
+  express: app
 })
+
+env.addFilter('usd', function(price){
+    // returns price in dollars
+    return `$${price}`;
+  });
+
+
 
 // view engine setup
 app.set('view engine', 'nunjucks');
