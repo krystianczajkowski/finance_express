@@ -19,8 +19,6 @@ def lookup(symbol):
     
     end = datetime.datetime.now(pytz.timezone("US/Eastern"))
     start = end - datetime.timedelta(days=7)
-    print(int(start.timestamp()))
-    print(int(end.timestamp()))
     # Yahoo Finance API
     url = (
         f"https://query1.finance.yahoo.com/v7/finance/download/{symbol}"
@@ -28,7 +26,6 @@ def lookup(symbol):
         f"&period2={int(end.timestamp())}"
         f"&interval=1d&events=history&includeAdjustedClose=true"
     )
-    print(url)
     # Query API
     try:
         response = requests.get(url, timeout=1000, cookies={"session": str(uuid.uuid4())}, headers={"User-Agent": "python-requests", "Accept": "*/*"})
