@@ -1,17 +1,16 @@
-var sqlite3 = require('sqlite3').verbose();
 var express = require('express');
 const session = require('express-session');
 var router = express.Router();
 var crypto = require('crypto');
+var db = require('../database');
 
 function checkPasswordHash(hash, salt, pass) {
   return hash === crypto.pbkdf2Sync(pass, salt, 1000, 64, `sha512`).toString(`hex`);
 }
 
-const db = new sqlite3.Database('database.db');
-
 let fetchUsernames = `SELECT username, hash, salt FROM users WHERE username = ?`;
 let insertUser = `INSERT INTO users(username, hash) VALUES(?, ?)`;
+let transactions = `SELECT * FROM transactions WHERE user_id=?`;
 
 /* GET home page. */
 router.post('/', async function(req, res, next) {
@@ -20,31 +19,28 @@ router.post('/', async function(req, res, next) {
   let password = req.body.password;
   let confirmation = req.body.confirmation;
   if (password != confirmation) {
-    res.render('register.njk', message = 'Passwords must match!')
+    return res.render('register.njk', {message: 'Passwords must match!', title: 'registration failed'})
   }
-  let salt = crypto.randomBytes(16).toString('hex');
-  let hash = crypto.pbkdf2Sync(password, salt, 
-    1000, 64, `sha512`).toString(`hex`);
-  let checkedHash = checkPasswordHash(hash, salt, password);
-  db.each(fetchUsernames, [username], (err, row) => {
+  // let salt = crypto.randomBytes(16).toString('hex');
+  // let hash = crypto.pbkdf2Sync(password, salt, 1000, 64, `sha512`).toString(`hex`);
+  
+  db.get(transactions, [1], (err, row) => {
     if (err) {
-      throw err;
+      return console.error(err.message);
     }
-    if (!row | checkPasswordHash())
-    console.log(`Username: ${row.username}`);
+    console.log(`row: ${row.stock}`);
+    return row;
   });
 
   let  data = {
-    message: checkedHash,
-    title: 'register',
+    message: 'User created!',
+    title: 'Registration succesful',
   };
-  
-  res.render('register.njk', data);
+  res.render('login.njk', data);
 });
 
 router.get('/', function(req, res) {
   res.render('register.njk', {title: 'REGISTER', message: 'hello stranger'});
 });
 
-db.close();
 module.exports = router;
