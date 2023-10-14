@@ -5,9 +5,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var nunjucks = require('nunjucks');
 var session = require('express-session');
-var sqlite3 = require('sqlite3').verbose();
 var SQLiteStore = require('connect-sqlite3')(session);
-
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -19,8 +17,7 @@ var buyRouter = require('./routes/buy');
 var sellRouter = require('./routes/sell');
 var quoteRouter = require('./routes/quote');
 
-const db = new sqlite3.Database('database.db');
-db.close();
+
 
 var app = express();
 
@@ -33,7 +30,6 @@ env.addFilter('usd', function(price){
     // returns price in dollars
     return `$${price}`;
   });
-
 
 
 // view engine setup
