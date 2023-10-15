@@ -1,11 +1,8 @@
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
-var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var nunjucks = require('nunjucks');
-var session = require('express-session');
-var SQLiteStore = require('connect-sqlite3')(session);
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -24,28 +21,19 @@ var app = express();
 var env = nunjucks.configure('views', {
   autoescape: true,
   express: app
-})
+});
 
 env.addFilter('usd', function(price){
     // returns price in dollars
     return `$${price}`;
   });
 
-
 // view engine setup
 app.set('view engine', 'nunjucks');
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
-app.use(session( {
-  store: new SQLiteStore,
-  secret: 'toaster cat',
-  cookie: { maxAge: 24 * 60 * 60 * 1000 },
-  saveUninitialized: true,
-  resave: true,
-  }
-));
+
 
 app.use('/', indexRouter);
 app.use('/quote', quoteRouter);

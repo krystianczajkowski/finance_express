@@ -10,9 +10,9 @@
         {{ message }}
     </h1>
     <form action="/register" method="post">
-        <input type="text" autocomplete="off" name="username">
-        <input type="password" autocomplete="off" name="password">
-        <input type="password" autocomplete="off" name="confirmation">
+        <input type="text" required autocomplete="off" name="username">
+        <input type="password" required autocomplete="off" name="password">
+        <input type="password" required autocomplete="off" name="confirmation">
         <input type="submit" value="Register">
     </form>
 {% endblock %}

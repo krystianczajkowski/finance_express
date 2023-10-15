@@ -34,8 +34,7 @@ function lookup(symbol, res) {
         fn => {
           const values = fn.split(',');
           return titles.reduce(
-            (obj, title, index) => ((obj[title] = values[index]), obj),
-            {});
+            (obj, title, index) => ((obj[title] = values[index]), obj), {});
         });
       let price = json.reverse()[0]['Adj Close'];
       const deets = {
@@ -44,20 +43,19 @@ function lookup(symbol, res) {
         "symbol": ticker
       };
       console.log(deets);
-      return res.render('quoted.njk', deets)
+      return res.render('quoted.njk', deets);
   }).catch((Error) => {
     console.log('Error!');
-    return res.render('quote.njk', {message:'Wrong ticker'})
+    return res.render('quote.njk', {message:'Wrong ticker'});
   });
 }
 
-router.post('/', async function(req, res, next) {
-  let ticker = req.body.symbol;
-  lookup(ticker, res);
+router.post('/', async function(req, res) {
+  lookup(req.body.symbol, res);
 });
 
 router.get('/', function(req, res) {
-  res.render('quote.njk', {title: 'Quote', message: 'Check price:'});
+    res.render('quote.njk', {title: 'Quote', message: 'Check price:'});
 });
 
 module.exports = router;
