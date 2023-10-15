@@ -9,7 +9,7 @@ let insertUser = `INSERT INTO users(username, hash, salt) VALUES(?, ?, ?)`;
 // let transactions = `SELECT * FROM transactions WHERE user_id=?`;
 
 /* GET home page. */
-router.post('/', function(req, res, next) {
+router.post('/', function(req, res) {
   // find a way to clear a session
   let username = req.body.username;
   let password = req.body.password;
@@ -17,7 +17,7 @@ router.post('/', function(req, res, next) {
   if (password != confirmation) {
     return res.render('register.njk', {message: 'Passwords must match!', title: 'Registration failed'})
   }
-
+  
   let salt = crypto.randomBytes(16).toString('hex');
   let hash = crypto.pbkdf2Sync(password, salt, 1000, 64, `sha512`).toString(`hex`);
   

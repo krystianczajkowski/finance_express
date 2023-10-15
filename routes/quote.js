@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var auth = require('../auth');
 
 function lookup(symbol, res) {
   let ticker = symbol.toUpperCase();
@@ -45,16 +46,16 @@ function lookup(symbol, res) {
       console.log(deets);
       return res.render('quoted.njk', deets);
   }).catch((Error) => {
-    console.log('Error!');
+    console.error(Error.message);
     return res.render('quote.njk', {message:'Wrong ticker'});
   });
 }
 
-router.post('/', async function(req, res) {
+router.post('/', auth, function(req, res) {
   lookup(req.body.symbol, res);
 });
 
-router.get('/', function(req, res) {
+router.get('/', auth, function(req, res) {
     res.render('quote.njk', {title: 'Quote', message: 'Check price:'});
 });
 

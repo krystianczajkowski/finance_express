@@ -4,7 +4,7 @@ var router = express.Router();
 
 
 /* GET home page. */
-router.post('/', async  function(req, res, next) {
+router.post('/',  function(req, res, next) {
   let formAnswer = req.body.userAnswer;
   let  data = {
     message: formAnswer,
