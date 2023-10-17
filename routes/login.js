@@ -12,13 +12,12 @@ const fetchUser = `SELECT username, hash, salt, cash FROM users WHERE username=?
 router.post('/', function(req, res) {
 
   let username = req.body.username;
-  let password = req.body.password;
   db.get(fetchUser, [username], function(err, row) {
     if (err) {
       console.error(err.message);
     }
     else if (row) {
-      if (checkPasswordHash(row.hash, row.salt, password)) {
+      if (checkPasswordHash(row.hash, row.salt, req.body.password)) {
         let data = {
           message: `Logged in as ${username}`,
           title: 'Login sucessful'
