@@ -4,6 +4,7 @@ var path = require('path');
 var logger = require('morgan');
 var nunjucks = require('nunjucks');
 var session = require('express-session');
+var LokiStrore = require('connect-loki')(session);
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -36,9 +37,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(session({
+  store: new LokiStrore(),
   secret: 'keyboard cat',
   resave: false,
-  saveUninitialized: true
+  saveUninitialized: true,
 }));
 
 
