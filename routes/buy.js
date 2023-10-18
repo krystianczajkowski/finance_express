@@ -7,10 +7,10 @@ var fetchUserData = `SELECT * FROM users WHERE username=?`;
 var buyStock = `UPDATE users(cash) VALUES cash=? WHERE username=?`;
 
 router.post("/", auth, function (req, res, next) {
-  db.get(fetchUserData, [req.session.user], function (err, row) {
-    if (err) {
-      console.error(err.message);
-    }
+    db.get(fetchUserData, [req.session.user], function (err, row) {
+        if (err) {
+            console.error(err.message);
+        }
         let ticker = req.body.ticker.toUpperCase();
         let quantity = req.body.quantity;
         timeNow = parseInt(Date.now() / 1000);
@@ -29,7 +29,8 @@ router.post("/", auth, function (req, res, next) {
                 Accept: "*/*",
             },
         };
-        fetch((new Request(url, params)))
+
+        fetch(new Request(url, params))
             .then((response) => {
                 if (!response.ok) {
                     throw new Error();
@@ -37,25 +38,35 @@ router.post("/", auth, function (req, res, next) {
                 return response.text();
             })
             .then((response) => {
-                let titles = response.slice(0, response.indexOf("\n")).split(",");
+                let titles = response
+                    .slice(0, response.indexOf("\n"))
+                    .split(",");
                 let json = response
-                .slice(response.indexOf("\n") + 1)
-                .split("\n")
-                .map((fn) => {
-                    const values = fn.split(",");
-                    return titles.reduce(
-                        (obj, title, index) => (
-                            (obj[title] = values[index]), obj
-                        ),
-                        {}
-                    );
-                });
+                    .slice(response.indexOf("\n") + 1)
+                    .split("\n")
+                    .map((fn) => {
+                        const values = fn.split(",");
+                        return titles.reduce(
+                            (obj, title, index) => (
+                                (obj[title] = values[index]), obj
+                            ),
+                            {}
+                        );
+                    });
                 return parseFloat(json.reverse()[0]["Adj Close"]) * quantity;
-            }).then((price) => {
-              return res.render('buy.njk', {message: price});
-            }).catch((Error) => {
-              console.error(Error.message);
-              return res.render('buy.njk', {message: 'No such stock!'})
+            })
+            .then((price) => {
+                if (price > userCash) {
+                    return res.render("buy.njk", {
+                        message: "Not enough cash",
+                    });
+                }
+                userCash -= price;
+                return res.render("buy.njk", { message: price });
+            })
+            .catch((Error) => {
+                console.error(Error.message);
+                return res.render("buy.njk", { message: "No such stock!" });
             });
     });
     // db.run(buyStock, [req.session.user, row.cash], function(err){
