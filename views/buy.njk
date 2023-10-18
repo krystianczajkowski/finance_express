@@ -9,8 +9,9 @@
     <h1>
         {{ message }}
     </h1>
-    <form action="/" method="post">
-        <input type="text" autocomplete="off" name="userAnswer">
-        <input type="submit" value="SEND">
+    <form action="/buy" method="post">
+        <input type="text" autocomplete="off" placeholder="Ticker" name="ticker">
+        <input type="number" autocomplete="off" name="quantity" placeholder="Quantity">
+        <input type="submit" value="BUY">
     </form>
 {% endblock %}

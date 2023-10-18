@@ -7,15 +7,15 @@ var router = express.Router();
 router.post('/',  function(req, res, next) {
   let formAnswer = req.body.userAnswer;
   let  data = {
-    message: formAnswer,
-    title: 'INDEX',
+    message: `Hello ${req.session.user}`,
+    title: 'Index'
   };
 
   res.render('index.njk', data);
 });
 
 router.get('/', function(req, res) {
-  res.render('index.njk', {title: 'INDEX', message: 'hello stranger'});
+  res.render('index.njk', {title: 'INDEX', message: `Hello ${req.session.user}`});
 });
 
 module.exports = router;
