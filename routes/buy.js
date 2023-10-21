@@ -4,22 +4,22 @@ var auth = require("../auth");
 var db = require("../database");
 
 var fetchUserData = `SELECT * FROM users WHERE username=?`;
-var buyStock = `UPDATE users(cash) VALUES cash=? WHERE username=?`;
+var setCash = `UPDATE users SET cash=? WHERE username=?`;
+var logTransaction = `INSERT INTO transactions(user_id, stock_value, stock, quantity, transaction_type) VALUES(?, ?, ?, ?, ?)`;
+
 
 router.post("/", auth, function (req, res, next) {
     db.get(fetchUserData, [req.session.user], function (err, row) {
-        if (err) {
-            console.error(err.message);
-        }
+        if (err) console.error(err.message);
         let ticker = req.body.ticker.toUpperCase();
         let quantity = req.body.quantity;
-        timeNow = parseInt(Date.now() / 1000);
+        let userCash = row.cash;
+        let timeNow = parseInt(Date.now() / 1000);
         let url =
             `https://query1.finance.yahoo.com/v7/finance/download/${ticker}` +
             `?period1=${timeNow}` +
             `&period2=${timeNow}` +
             `&interval=1d&events=history&includeAdjustedClose=true`;
-        console.log(url);
         const params = {
             cookies: {
                 session: crypto.randomUUID(),
@@ -29,7 +29,6 @@ router.post("/", auth, function (req, res, next) {
                 Accept: "*/*",
             },
         };
-
         fetch(new Request(url, params))
             .then((response) => {
                 if (!response.ok) {
@@ -61,21 +60,39 @@ router.post("/", auth, function (req, res, next) {
                         message: "Not enough cash",
                     });
                 }
-                userCash -= price;
-                return res.render("buy.njk", { message: price });
+                db.serialize(function() {
+                    db.run(logTransaction, [row.id, price, ticker, quantity], function(err) {
+                        if (err) console.error(err.message);
+                    });
+                    userCash -= price;
+                    req.session.userCash = userCash;
+                    db.run(setCash, [userCash, req.session.user], (err) => {
+                        if (err) console.error(err.message);
+                    });
+                });
+                let data = {
+                    balance: userCash,
+                    message: `Succesfully bought ${quantity} shares of ${ticker} at $${price}`
+            };
+                return res.render("buy.njk", data);
             })
             .catch((Error) => {
                 console.error(Error.message);
                 return res.render("buy.njk", { message: "No such stock!" });
             });
     });
-    // db.run(buyStock, [req.session.user, row.cash], function(err){
-    //     if (err) console.error(err.message);
-    // });
     // db.close();
 });
 
 router.get("/", auth, function (req, res) {
+    if (req.session.userCash) {
+        let data = {
+            title: 'Buy',
+            message: 'Purchase a stock',
+            balance: `${req.session.userCash}`
+        };
+        return res.render("buy.njk", data);
+    }
     res.render("buy.njk", { title: "BUY", message: "Buy stock" });
 });
 

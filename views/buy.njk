@@ -6,12 +6,21 @@
     {% if not message %}
         <p>No messages!</p>
     {% endif %}
+    {% if balance %}
+    <h1>
+        Balance: {{ balance | usd }}
+    </h1>
+    {% else %}
+    
+    {% endif %}
     <h1>
         {{ message }}
     </h1>
     <form action="/buy" method="post">
-        <input type="text" autocomplete="off" placeholder="Ticker" name="ticker">
-        <input type="number" autocomplete="off" name="quantity" placeholder="Quantity">
+        <div class="mb-3">
+            <p><input class="form-control mx-auto w-auto" type="text" autocomplete="off" placeholder="Ticker" name="ticker"></p>
+            <p><input class="form-control mx-auto w-auto" type="number" autocomplete="off" name="quantity" placeholder="Quantity"></p>
+        </div>
         <input type="submit" value="BUY">
     </form>
 {% endblock %}
