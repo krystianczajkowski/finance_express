@@ -28,6 +28,7 @@ router.post('/', function(req, res) {
           }
           // store user information in session, typically a user id
           req.session.user = username;
+          req.session.userCash = row.cash;
           // save the session before redirection to ensure page
           // load does not happen before session is saved
           req.session.save(function (err) {
