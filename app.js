@@ -27,7 +27,7 @@ var env = nunjucks.configure('views', {
 
 env.addFilter('usd', function(price){
     // returns price in dollars
-    return `$${price}`;
+    return `$${parseFloat(price).toFixed(2)}`;
   });
 
 // view engine setup
