@@ -2,6 +2,7 @@ var express = require("express");
 var router = express.Router();
 var auth = require("../auth");
 var db = require("../database");
+var crypto = require("crypto");
 
 var fetchUserData = `SELECT * FROM users WHERE username=?`;
 var setCash = `UPDATE users SET cash=? WHERE username=?`;
@@ -15,9 +16,10 @@ router.post("/", auth, function (req, res, next) {
         let quantity = req.body.quantity;
         let userCash = row.cash;
         let timeNow = parseInt(Date.now() / 1000);
+        let timeThen = timeNow - (1000 * 60 * 60);
         let url =
             `https://query1.finance.yahoo.com/v7/finance/download/${ticker}` +
-            `?period1=${timeNow}` +
+            `?period1=${timeThen}` +
             `&period2=${timeNow}` +
             `&interval=1d&events=history&includeAdjustedClose=true`;
         const params = {
