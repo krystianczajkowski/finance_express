@@ -3,16 +3,9 @@
     {{ title }}
 {% endblock %}
 {% block main %}
-    {% if not message %}
-        <p>No messages!</p>
-    {% endif %}
-    {% if balance %}
     <h1>
         Balance: {{ balance | usd }}
     </h1>
-    {% else %}
-    
-    {% endif %}
     <h1>
         {{ message }}
     </h1>
