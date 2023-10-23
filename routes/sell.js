@@ -6,7 +6,7 @@ var db = require("../database");
 var fetchUserData = `SELECT * FROM users WHERE username=?`;
 var setCash = `UPDATE users SET cash=? WHERE username=?`;
 var logTransaction = `INSERT INTO transactions(user_id, stock_value, stock, quantity, transaction_type) VALUES(?, ?, ?, ?, ?)`;
-var getUserStock = `SELECT `;
+var getUserStock = `SELECT u.id, u.cash, t.date, t.stock, t.stock_value, t.quantity FROM users u JOIN transactions t ON u.id = t.user_id WHERE u.username=?`;
 
 router.post("/sell", auth, function (req, res, next) {
     db.get(fetchUserData, [req.session.user], function(err, row) {
