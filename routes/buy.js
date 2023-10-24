@@ -7,6 +7,7 @@ var crypto = require("crypto");
 var fetchUserData = `SELECT * FROM users WHERE username=?`;
 var setCash = `UPDATE users SET cash=? WHERE username=?`;
 var logTransaction = `INSERT INTO transactions(user_id, stock_value, stock, quantity, transaction_type) VALUES(?, ?, ?, ?, ?)`;
+var addStock = `INSERT INTO user_stock(user_id, value, stock, quantity) VALUES(?, ?, ?, ?) ON CONFLICT(user_id, stock) DO UPDATE SET value = value + excluded.value, quantity = quantity + excluded.quantity`;
 
 
 router.post("/", auth, function (req, res, next) {
@@ -63,12 +64,15 @@ router.post("/", auth, function (req, res, next) {
                     });
                 }
                 db.serialize(function() {
-                    db.run(logTransaction, [row.id, price, ticker, quantity], function(err) {
+                    db.run(logTransaction, [row.id, price, ticker, quantity, 'BUY'], function(err) {
                         if (err) console.error(err.message);
                     });
                     userCash -= price;
                     req.session.userCash = userCash;
                     db.run(setCash, [userCash, req.session.user], (err) => {
+                        if (err) console.error(err.message);
+                    });
+                    db.run(addStock, [row.id, price, ticker, quantity], function(err) {
                         if (err) console.error(err.message);
                     });
                 });

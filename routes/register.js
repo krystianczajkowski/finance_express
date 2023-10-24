@@ -30,7 +30,7 @@ router.post('/', function(req, res) {
       console.log(`Row inserted with id: ${this.lastID}`);
       let  data = {
         message: `User ${username} created!`,
-        title: 'Registration succesful',
+        title: 'Registration succesful you can login now.',
       };
       res.render('login.njk', data);
     }
