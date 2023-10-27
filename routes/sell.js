@@ -3,25 +3,46 @@ var router = express.Router();
 var auth = require("../auth");
 var db = require("../database");
 
-var fetchUserData = `SELECT * FROM users WHERE username=?`;
+var fetchUserData = `SELECT u.id, u.cash, u_p.stock, u_p.quantity as quant FROM users u, user_portfolio u_p WHERE u.username=? AND u.id = u_p.user_id;`;
 var setCash = `UPDATE users SET cash=? WHERE username=?`;
-var logTransaction = `INSERT INTO transactions(user_id, stock_value, stock, quantity, transaction_type) VALUES(?, ?, ?, ?, ?)`;
-var getUserStock = `SELECT u.id, u.cash, t.date, t.stock, t.stock_value, t.quantity FROM users u JOIN transactions t ON u.id = t.user_id WHERE u.username=?`;
+var addStock = `INSERT INTO user_portfolio(user_id, stock_value, stock, quantity, transaction_type) VALUES(?, ?, ?, ?, 'SELL')`;
 
-router.post("/sell", auth, function (req, res, next) {
-    db.get(fetchUserData, [req.session.user], function(err, row) {
-        if (err) console.error(err.message);
-    });
+router.post("/", auth, function (req, res, next) {
+    let stock = req.body.stock;
+    let quant = req.body.quantity;
+    if (quant > req.session.stocks[stock]) {
+        console.log('negative stocks');
+        let data = {
+            title: 'Not enough stocks!',
+            message: `Can't sell ${quant} ${stock} you only have ${req.session.stocks[stock]}`,
+        }
+        return res.render("sell.njk", data);
+    }
+    // db.get(fetchUserData, [req.session.user], function(err, row) {
+    //     if (err) console.error(err.message);
+    // });
+    let data = {
+        title: quant,
+        message: `${quant > req.session.stocks[stock]}`,
+    }
     res.render("sell.njk", data);
 });
 
 router.get("/", auth, function (req, res) {
     // count how many stocks a user has
-    db.get(fetchUserData, [req.session.user], function(err, rows) {
+    db.all(fetchUserData, [req.session.user], function(err, rows) {
         if (err) console.error(err.message);
-        
+        let user_stocks = {};
+        for (let i = 0; i < rows.length; i++) {
+            if (rows[i]['stock'] in user_stocks) {
+                user_stocks[rows[i]['stock']] += rows[i]['quant'];
+            }
+            else user_stocks[rows[i]['stock']] = rows[i]['quant'];
+        }
+        req.session.stocks = user_stocks;
+        console.log(req.session.stocks);
+        res.render("sell.njk", { title: "SELL", message: "Sell stock", user_stocks });
     });
-    res.render("sell.njk", { title: "SELL", message: "Sell stock" });
 });
 
 module.exports = router;
