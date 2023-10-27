@@ -3,9 +3,11 @@
     {{ title }}
 {% endblock %}
 {% block main %}
+    {% if balance %}
     <h1>
         Balance: {{ balance | usd }}
     </h1>
+    {% endif %}
     <h1>
         {{ message }}
     </h1>

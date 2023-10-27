@@ -6,15 +6,17 @@ var crypto = require("crypto");
 
 var fetchUserData = `SELECT * FROM users WHERE username=?`;
 var setCash = `UPDATE users SET cash=? WHERE username=?`;
-var logTransaction = `INSERT INTO transactions(user_id, stock_value, stock, quantity, transaction_type) VALUES(?, ?, ?, ?, ?)`;
-var addStock = `INSERT INTO user_stock(user_id, value, stock, quantity) VALUES(?, ?, ?, ?) ON CONFLICT(user_id, stock) DO UPDATE SET value = value + excluded.value, quantity = quantity + excluded.quantity`;
+var addStock = `INSERT INTO user_portfolio(user_id, stock_value, stock, quantity, transaction_type) VALUES(?, ?, ?, ?, ?)`;
 
 
 router.post("/", auth, function (req, res, next) {
+    let quantity = req.body.quantity;
+    if (quantity <= 0 | ticker == '') {
+        return res.render('buy.njk', {message: 'Select a stock to buy'});
+    }
     db.get(fetchUserData, [req.session.user], function (err, row) {
-        if (err) console.error(err.message);
         let ticker = req.body.ticker.toUpperCase();
-        let quantity = req.body.quantity;
+        if (err) console.error(err.message);
         let userCash = row.cash;
         let timeNow = parseInt(Date.now() / 1000);
         let timeThen = timeNow - (1000 * 60 * 60);
@@ -55,7 +57,7 @@ router.post("/", auth, function (req, res, next) {
                             {}
                         );
                     });
-                return parseFloat(json.reverse()[0]["Adj Close"]) * quantity;
+                return parseFloat(json.reverse()[0]["Adj Close"]);
             })
             .then((price) => {
                 if (price > userCash) {
@@ -64,22 +66,19 @@ router.post("/", auth, function (req, res, next) {
                     });
                 }
                 db.serialize(function() {
-                    db.run(logTransaction, [row.id, price, ticker, quantity, 'BUY'], function(err) {
+                    userCash -= price;
+                    db.run(addStock, [row.id, price, ticker, quantity, 'BUY'], function(err) {
                         if (err) console.error(err.message);
                     });
-                    userCash -= price;
-                    req.session.userCash = userCash;
                     db.run(setCash, [userCash, req.session.user], (err) => {
                         if (err) console.error(err.message);
-                    });
-                    db.run(addStock, [row.id, price, ticker, quantity], function(err) {
-                        if (err) console.error(err.message);
+                        req.session.userCash = userCash;
                     });
                 });
                 let data = {
                     balance: userCash,
                     message: `Succesfully bought ${quantity} shares of ${ticker} at $${price}`
-            };
+                };
                 return res.render("buy.njk", data);
             })
             .catch((Error) => {
