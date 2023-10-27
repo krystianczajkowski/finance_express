@@ -11,11 +11,11 @@ var addStock = `INSERT INTO user_portfolio(user_id, stock_value, stock, quantity
 
 router.post("/", auth, function (req, res, next) {
     let quantity = req.body.quantity;
+    let ticker = req.body.ticker.toUpperCase();
     if (quantity <= 0 | ticker == '') {
         return res.render('buy.njk', {message: 'Select a stock to buy'});
     }
     db.get(fetchUserData, [req.session.user], function (err, row) {
-        let ticker = req.body.ticker.toUpperCase();
         if (err) console.error(err.message);
         let userCash = row.cash;
         let timeNow = parseInt(Date.now() / 1000);
@@ -86,7 +86,6 @@ router.post("/", auth, function (req, res, next) {
                 return res.render("buy.njk", { message: "No such stock!" });
             });
     });
-    // db.close();
 });
 
 router.get("/", auth, function (req, res) {
