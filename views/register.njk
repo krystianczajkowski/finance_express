@@ -10,9 +10,9 @@
         {{ message }}
     </h1>
     <form action="/register" method="post">
-        <input type="text" required autocomplete="off" name="username">
-        <input type="password" required autocomplete="off" name="password">
-        <input type="password" required autocomplete="off" name="confirmation">
-        <input type="submit" value="Register">
+        <div class="mb-3"><input type="text" required autofocus class="form-control mx-auto w-auto" placeholder="Username:" autocomplete="off" name="username"></div>
+        <div class="mb-3"><input type="password" required autofocus class="form-control mx-auto w-auto" placeholder="Password:" autocomplete="off" name="password"></div>
+        <div class="mb-3"><input type="password" required autofocus class="form-control mx-auto w-auto" placeholder="Password:" autocomplete="off" name="confirmation"></div>
+        <div class="mb-3"><input type="submit" value="Register"></div>
     </form>
 {% endblock %}
