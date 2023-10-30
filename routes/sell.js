@@ -112,8 +112,8 @@ router.get("/", auth, function (req, res) {
                 }
             }
         }
-        req.session.userCash = rows[0]['ucash'];
         if (count == 0) return res.render('buy.njk', {cash: req.session.userCash, title: 'Buy something!', session: true, message: 'In order to sell stock, first you need to have some!'});
+        req.session.userCash = rows[0]['ucash'];
         req.session.user_id = rows[0]['uid'];
         req.session.stocks = user_stocks;
         res.render("sell.njk", { cash: req.session.userCash, title: "SELL", message: "Sell stock", user_stocks: req.session.stocks, session: true});
