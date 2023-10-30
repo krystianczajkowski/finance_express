@@ -77,7 +77,8 @@ router.post("/", auth, function (req, res, next) {
                 });
                 let data = {
                     balance: userCash,
-                    message: `Succesfully bought ${quantity} shares of ${ticker} at $${price}`
+                    message: `Succesfully bought ${quantity} shares of ${ticker} at $${price}`,
+                    session: true
                 };
                 return res.render("buy.njk", data);
             })
@@ -93,7 +94,8 @@ router.get("/", auth, function (req, res) {
         let data = {
             title: 'Buy',
             message: 'Purchase a stock',
-            balance: `${req.session.userCash}`
+            balance: `${req.session.userCash}`,
+            session: true
         };
         return res.render("buy.njk", data);
     }
