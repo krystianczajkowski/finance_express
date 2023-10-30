@@ -38,7 +38,7 @@ router.post('/', function(req, res) {
 });
 
 router.get('/', function(req, res) {
-  res.render('register.njk', {title: 'REGISTER', message: 'hello stranger'});
+  res.render('register.njk', {title: 'Register', message: 'Hello stranger'});
 });
 
 module.exports = router;

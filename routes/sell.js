@@ -15,6 +15,8 @@ router.post("/", auth, function (req, res, next) {
         let data = {
             title: 'Not enough stocks!',
             message: `Can't sell ${quant} ${stock} you only have ${req.session.stocks[stock]}`,
+            session: true,
+            user_stocks: req.session.stocks
         }
         return res.render("sell.njk", data);
     }
@@ -23,7 +25,7 @@ router.post("/", auth, function (req, res, next) {
     // });
     let data = {
         title: quant,
-        message: `${quant > req.session.stocks[stock]}`,
+        message: `${quant} is smaller than ${req.session.stocks[stock]}`,
     }
     res.render("sell.njk", data);
 });
@@ -41,7 +43,7 @@ router.get("/", auth, function (req, res) {
         }
         req.session.stocks = user_stocks;
         console.log(req.session.stocks);
-        res.render("sell.njk", { title: "SELL", message: "Sell stock", user_stocks });
+        res.render("sell.njk", { title: "SELL", message: "Sell stock", user_stocks, session: true});
     });
 });
 

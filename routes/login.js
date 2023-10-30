@@ -20,7 +20,8 @@ router.post('/', function(req, res) {
       if (checkPasswordHash(row.hash, row.salt, req.body.password)) {
         let data = {
           message: `Logged in as ${username}`,
-          title: 'Login sucessful'
+          title: 'Login sucessful',
+          session: true
         };
         req.session.regenerate(function (err) {
           if (err) {

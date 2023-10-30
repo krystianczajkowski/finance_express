@@ -8,7 +8,7 @@ router.post('/', auth, function(req, res) {
 });
 
 router.get('/', auth, function(req, res) {
-    res.render('quote.njk', {title: 'Quote', message: 'Check price:'});
+    res.render('quote.njk', {title: 'Quote', message: 'Check price:', session: true});
 });
 
 module.exports = router;

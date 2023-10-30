@@ -15,7 +15,7 @@ router.get('/', function (req, res) {
     // guard against forms of session fixation
     req.session.regenerate(function (err) {
       if (err) next(err);
-      res.render('login.njk', {title: 'LOGGED OUT', message: 'Log in again'});
+      res.render('login.njk', {title: 'Bye!', message: 'Log in again'});
     });
   });
 });
