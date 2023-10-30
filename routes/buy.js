@@ -66,10 +66,10 @@ router.post("/", auth, function (req, res, next) {
                     });
                 }
                 db.serialize(function() {
-                    userCash -= price;
                     db.run(addStock, [row.id, price, ticker, quantity, 'BUY'], function(err) {
                         if (err) console.error(err.message);
                     });
+                    userCash -= price * quantity;
                     db.run(setCash, [userCash, req.session.user], (err) => {
                         if (err) console.error(err.message);
                         req.session.userCash = userCash;
@@ -77,7 +77,7 @@ router.post("/", auth, function (req, res, next) {
                 });
                 let data = {
                     balance: userCash,
-                    message: `Succesfully bought ${quantity} shares of ${ticker} at $${price}`,
+                    message: `Succesfully bought ${quantity} shares of ${ticker} at $${price} for ${price * quantity}`,
                     session: true
                 };
                 return res.render("buy.njk", data);
