@@ -1,5 +1,15 @@
 {% extends 'layout.njk' %}
+{% block title %}
+    {{ title }}
+{% endblock %}
+{% block main %}
+    <h1>
+        {{ message }}
+    </h1>
 
-{% block content %}
-    {{ message }}
+        <ul class="list-group w-auto">
+            {% for _, user in users %}
+            <li class="list-group-item mb-3">{{ user }}</li>
+            {% endfor %}
+        </ul>
 {% endblock %}
