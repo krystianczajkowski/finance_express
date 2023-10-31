@@ -9,8 +9,37 @@
     <h1>
         {{ message }}
     </h1>
-    <form action="/" method="post">
-        <input type="text" autocomplete="off" name="userAnswer">
-        <input type="submit" value="SEND">
-    </form>
+
+    <table class="fs-4 mb-6 container-fluid py-6 text-center">
+        <thead class="fs-2">
+            <tr>
+                <th>Transaction Type</th>
+                <th>Name</th>
+                <th>Stock Value</th>
+                <th>Quantity</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody class="">
+            {% for t in transactions %}
+                {% if t.quantity < 0 %}
+                    <tr class="mt-3 mb-4">
+                        <th class="cred">{{ t.transaction_type }}</th>
+                        <th>{{ t.stock }}</th>
+                        <th>{{ t.stock_value | usd }}</th>
+                        <th class="cred">{{ t.quantity }}</th>
+                        <th>{{ t.transaction_date }}</th>
+                    </tr>
+                {% else %}
+                    <tr class="mt-3 mb-4">
+                        <th class="cgreen">{{ t.transaction_type }}</th>
+                        <th>{{ t.stock }}</th>
+                        <th>{{ t.stock_value | usd }}</th>
+                        <th class="cgreen">{{ t.quantity }}</th>
+                        <th>{{ t.transaction_date }}</th>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}
