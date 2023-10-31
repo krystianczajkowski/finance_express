@@ -73,18 +73,19 @@ router.post("/", auth, function (req, res, next) {
                     db.run(setCash, [userCash, req.session.user], (err) => {
                         if (err) console.error(err.message);
                         req.session.userCash = userCash;
+                        let data = {
+                            balance: userCash,
+                            message: `Succesfully bought ${quantity} shares of ${ticker} at $${price} for ${price * quantity}`,
+                            session: true,
+                            balance: req.session.userCash
+                        };
+                        return res.render("buy.njk", data);
                     });
                 });
-                let data = {
-                    balance: userCash,
-                    message: `Succesfully bought ${quantity} shares of ${ticker} at $${price} for ${price * quantity}`,
-                    session: true
-                };
-                return res.render("buy.njk", data);
             })
             .catch((Error) => {
                 console.error(Error.message);
-                return res.render("buy.njk", { message: "No such stock!" });
+                return res.render("buy.njk", { message: "No such stock!", balance: req.session.userCash });
             });
     });
 });
@@ -94,7 +95,7 @@ router.get("/", auth, function (req, res) {
         let data = {
             title: 'Buy',
             message: 'Purchase a stock',
-            balance: `${req.session.userCash}`,
+            balance: req.session.userCash,
             session: true
         };
         return res.render("buy.njk", data);
