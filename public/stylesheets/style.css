@@ -24,3 +24,11 @@ nav .navbar-brand .green
 {
     color: #2e944b;
 }
+
+.cred {
+    color: red
+}
+
+.cgreen {
+    color: green;
+}
