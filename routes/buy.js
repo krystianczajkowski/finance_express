@@ -60,7 +60,7 @@ router.post("/", auth, function (req, res, next) {
                 return parseFloat(json.reverse()[0]["Adj Close"]);
             })
             .then((price) => {
-                if (price > userCash) {
+                if (price*quantity > userCash) {
                     return res.render("buy.njk", {
                         message: "Not enough cash",
                     });
