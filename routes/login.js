@@ -33,9 +33,7 @@ router.post('/', function(req, res) {
           // save the session before redirection to ensure page
           // load does not happen before session is saved
           req.session.save(function (err) {
-            if (err) {
-              return next(err);
-            }
+            if (err) return next(err);
             return res.render('index.njk', data);
           });
         });

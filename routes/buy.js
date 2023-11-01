@@ -13,7 +13,7 @@ router.post("/", auth, function (req, res, next) {
     let quantity = req.body.quantity;
     let ticker = req.body.ticker.toUpperCase();
     if (quantity <= 0 | ticker == '') {
-        return res.render('buy.njk', {message: 'Select a stock to buy'});
+        return res.render('buy.njk', {message: 'Select a stock to buy', session: true});
     }
     db.get(fetchUserData, [req.session.user], function (err, row) {
         if (err) console.error(err.message);
@@ -63,6 +63,7 @@ router.post("/", auth, function (req, res, next) {
                 if (price*quantity > userCash) {
                     return res.render("buy.njk", {
                         message: "Not enough cash",
+                        session: true
                     });
                 }
                 db.serialize(function() {
@@ -100,7 +101,7 @@ router.get("/", auth, function (req, res) {
         };
         return res.render("buy.njk", data);
     }
-    res.render("buy.njk", { title: "BUY", message: "Buy stock" });
+    res.render("buy.njk", { title: "BUY", message: "Buy stock", session: true });
 });
 
 module.exports = router;

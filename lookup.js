@@ -45,13 +45,14 @@ function lookup(req, res, symbol) {
                 name: ticker,
                 price: parseFloat(price).toFixed(2),
                 symbol: ticker,
+                session: true
             };
             console.log(deets);
             return res.render("quoted.njk", deets);
         })
         .catch((Error) => {
             console.error(Error.message);
-            return res.render("quote.njk", { message: "Wrong ticker" });
+            return res.render("quote.njk", { message: "Wrong ticker", session: true });
         });
 }
 

@@ -83,7 +83,7 @@ router.post("/", auth, function (req, res, next) {
         })
         .catch((Error) => {
             console.error(Error.message);
-            return res.render("sell.njk", { message: "Something went wrong!" });
+            return res.render("sell.njk", { message: "Something went wrong!", session: true});
         });
 });
 

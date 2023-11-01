@@ -15,7 +15,7 @@ router.get('/', auth, function(req, res) {
       allUsers[i] = element['username'];
       console.log(allUsers[i]);
     }
-    res.render('users.njk', {title: 'Users', message: 'All users by account age:', users: allUsers});
+    res.render('users.njk', {title: 'Users', message: 'All users by account age:', users: allUsers, session: true});
   })
 });
 
