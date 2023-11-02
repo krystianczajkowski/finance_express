@@ -21,6 +21,8 @@ router.post('/', function(req, res) {
         let data = {
           message: `Logged in as ${username}`,
           title: 'Login sucessful',
+          balance: row.cash,
+          total_value: row.cash,
           session: true
         };
         req.session.regenerate(function (err) {
