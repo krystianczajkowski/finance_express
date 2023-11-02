@@ -76,7 +76,7 @@ router.post("/", auth, function (req, res, next) {
                         req.session.userCash = userCash;
                         let data = {
                             balance: userCash,
-                            message: `Succesfully bought ${quantity} shares of ${ticker} at $${price} for ${price * quantity}`,
+                            message: `Succesfully bought ${quantity} shares of ${ticker} at $${price} for $${price * quantity}`,
                             session: true,
                             balance: req.session.userCash
                         };
