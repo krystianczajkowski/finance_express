@@ -1,1 +1,1 @@
-# Clone of CS50 week 9 problem set (with slight variations) in javascript.
+# Clone of [CS50 week 9 problem set](https://cs50.harvard.edu/x/2023/psets/9/finance/) (with slight variations) in javascript.
